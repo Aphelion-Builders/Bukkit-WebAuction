@@ -111,8 +111,15 @@ public class WebAuction extends JavaPlugin
                     String query = "CREATE TABLE WA_Players (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name VARCHAR(255), pass VARCHAR(255), money DOUBLE, canBuy INT, canSell INT, isAdmin INT);";
                     this.manageMySQL.createTable(query);
                 }
-            
-                if (!this.manageMySQL.checkTable("WA_WebAdmins")) 
+
+				if (!this.manageMySQL.checkTable("WA_StorageCheck")) 
+				{
+					this.log.info(this.logPrefix + "Creating table WA_StorageCheck");
+					String query = "CREATE TABLE WA_StorageCheck (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), time INT);";
+					this.manageMySQL.createTable(query);
+				}
+                
+				if (!this.manageMySQL.checkTable("WA_WebAdmins")) 
                 {
                     this.log.info(this.logPrefix + "Creating table WA_WebAdmins");
                     String query = "CREATE TABLE WA_WebAdmins (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name VARCHAR(255));";
@@ -129,7 +136,7 @@ public class WebAuction extends JavaPlugin
                 if (!this.manageMySQL.checkTable("WA_Auctions")) 
                 {
                     this.log.info(this.logPrefix + "Creating table WA_Auctions");
-                    String query = "CREATE TABLE WA_Auctions (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name INT, damage INT, player VARCHAR(255), quantity INT, price DOUBLE);";
+                    String query = "CREATE TABLE WA_Auctions (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name INT, damage INT, player VARCHAR(255), quantity INT, price DOUBLE, started INT);";
                     this.manageMySQL.createTable(query);
                 }
                 
