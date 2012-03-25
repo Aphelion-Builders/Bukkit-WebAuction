@@ -2,13 +2,10 @@ package com.nijikokun.WA.register;
 
 import com.nijikokun.WA.register.listeners.server;
 import com.nijikokun.WA.register.payment.Methods;
+import java.io.File;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
-
-import java.io.File;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * Register
@@ -24,7 +21,7 @@ import org.bukkit.event.Event.Type;
  */
 public class Register extends JavaPlugin {
 
-    public Configuration config;
+    public FileConfiguration config;
     public String preferred;
     public PluginDescriptionFile info;
 
@@ -50,7 +47,7 @@ public class Register extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        config = new Configuration(new File("bukkit.yml"));
+        config = new FileConfiguration(new File("bukkit.yml"));
         info = this.getDescription();
         config.load();
 

@@ -43,11 +43,6 @@ public class Methods {
      */
     private static void _init() {
         addMethod("iConomy", new com.nijikokun.WA.register.payment.methods.iCo6());
-        addMethod("iConomy", new com.nijikokun.WA.register.payment.methods.iCo5());
-        addMethod("BOSEconomy", new com.nijikokun.WA.register.payment.methods.BOSE6());
-        addMethod("BOSEconomy", new com.nijikokun.WA.register.payment.methods.BOSE7());
-        addMethod("Essentials", new com.nijikokun.WA.register.payment.methods.EE17());
-        addMethod("Currency", new com.nijikokun.WA.register.payment.methods.MCUR());
         Dependencies.add("MultiCurrency");
     }
 
