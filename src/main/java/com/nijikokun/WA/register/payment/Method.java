@@ -1,5 +1,6 @@
 package com.nijikokun.WA.register.payment;
 
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -89,6 +90,23 @@ public interface Method {
     public boolean hasBankAccount(String bank, String name);
 
     /**
+     * Forces an account creation
+     *
+     * @param name Account name
+     * @return <code>boolean</code>
+     */
+    public boolean createAccount(String name);
+
+    /**
+     * Forces an account creation
+     *
+     * @param name Account name
+     * @param balance Initial account balance
+     * @return <code>boolean</code>
+     */
+    public boolean createAccount(String name, double balance);
+
+    /**
      * Returns a <code>MethodAccount</code> class for an account <code>name</code>.
      *
      * @param name Account name
@@ -126,6 +144,7 @@ public interface Method {
      * Contains Calculator and Balance functions for Accounts.
      */
     public interface MethodAccount {
+    	
         public double balance();
         public boolean set(double amount);
         public boolean add(double amount);
@@ -136,6 +155,18 @@ public interface Method {
         public boolean hasOver(double amount);
         public boolean hasUnder(double amount);
         public boolean isNegative();
+        
+        public double balance(World world);
+        public boolean set(double amount, World world);
+        public boolean add(double amount, World world);
+        public boolean subtract(double amount, World world);
+        public boolean multiply(double amount, World world);
+        public boolean divide(double amount, World world);
+        public boolean hasEnough(double amount, World world);
+        public boolean hasOver(double amount, World world);
+        public boolean hasUnder(double amount, World world);
+        public boolean isNegative(World world);
+        
         public boolean remove();
 
         @Override
@@ -146,9 +177,11 @@ public interface Method {
      * Contains Calculator and Balance functions for Bank Accounts.
      */
     public interface MethodBankAccount {
-        public double balance();
+
         public String getBankName();
         public int getBankId();
+        
+        public double balance();
         public boolean set(double amount);
         public boolean add(double amount);
         public boolean subtract(double amount);
@@ -158,6 +191,18 @@ public interface Method {
         public boolean hasOver(double amount);
         public boolean hasUnder(double amount);
         public boolean isNegative();
+        
+        public double balance(World world);
+        public boolean set(double amount, World world);
+        public boolean add(double amount, World world);
+        public boolean subtract(double amount, World world);
+        public boolean multiply(double amount, World world);
+        public boolean divide(double amount, World world);
+        public boolean hasEnough(double amount, World world);
+        public boolean hasOver(double amount, World world);
+        public boolean hasUnder(double amount, World world);
+        public boolean isNegative(World world);
+        
         public boolean remove();
 
         @Override

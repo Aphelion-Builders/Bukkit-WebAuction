@@ -51,13 +51,6 @@
           <version>1.0</version>
           <type>jar</type>
           <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>me.ashtheking</groupId>
-          <artifactId>MultiCurrency</artifactId>
-          <version>1.0</version>
-          <type>jar</type>
-          <scope>compile</scope>
         </dependency>        
         <dependency>
           <groupId>org.getspout</groupId>

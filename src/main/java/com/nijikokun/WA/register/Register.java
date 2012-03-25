@@ -2,10 +2,15 @@ package com.nijikokun.WA.register;
 
 import com.nijikokun.WA.register.listeners.server;
 import com.nijikokun.WA.register.payment.Methods;
-import java.io.File;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Register
@@ -21,53 +26,58 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class Register extends JavaPlugin {
 
-    public FileConfiguration config;
+	private File configFile = new File("bukkit.yml");
+    public YamlConfiguration config = new YamlConfiguration();
     public String preferred;
     public PluginDescriptionFile info;
+    public server serverListener = new server(this);
 
     private String getPreferred() {
         return config.getString("economy.preferred");
     }
 
-    private void setPreferred(String preferences) {
-        config.setProperty("economy.preferred", preferences);
-        config.save();
+    @SuppressWarnings("unused")
+	private void setPreferred(String preferences) {
+        config.set("economy.preferred", preferences);
+        try {
+			config.save(configFile);
+		} catch (IOException e) {
+		}
     }
 
     private boolean hasPreferred() {
         return Methods.setPreferred(getPreferred());
     }
 
-    @Override
     public void onDisable() {
         Methods.reset();
-
-        System.out.println("[" + info.getName() + "] Payment method was disabled. No longer accepting payments.");
     }
 
     @Override
     public void onLoad() {
-        config = new FileConfiguration(new File("bukkit.yml"));
-        info = this.getDescription();
-        config.load();
-
-        if (!hasPreferred()) {
-            System.out.println("[" + info.getName() + "] Preferred method [" + getPreferred() + "] not found, using first found.");
-
-            Methods.setVersion(info.getVersion());
-            Methods.setMethod(this.getServer().getPluginManager());
-        }
-
-        if (Methods.getMethod() == null)
-            System.out.println("[" + info.getName() + "] No payment method found, economy based plugins may not work.");
-        else
-            System.out.println("[" + info.getName() + "] Payment method found (" + Methods.getMethod().getName() + " version: " + Methods.getMethod().getVersion() + ")");
-
-        System.out.print("[" + info.getName() + "] version " + info.getVersion()+ " is enabled.");
+        try {
+			config.load(configFile);
+		
+	        info = this.getDescription();
+	
+	        if (!hasPreferred()) {
+	            System.out.println("[" + info.getName() + "] Preferred method [" + getPreferred() + "] not found, using first found.");
+	
+	            Methods.setVersion(info.getVersion());
+	            Methods.setMethod(this.getServer().getPluginManager());
+	        }
+	
+	        if (Methods.hasMethod())
+	            System.out.println("[" + info.getName() + "] Payment method found (" + Methods.getMethod().getName() + " version: " + Methods.getMethod().getVersion() + ")");
+	
+	        System.out.print("[" + info.getName() + "] version " + info.getVersion()+ " is enabled.");
+        } catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} catch (InvalidConfigurationException e) {
+		}
     }
-
-    @Override
+    //No override, as we're using Java version 1.5
     public void onEnable() {
-        this.getServer().getPluginManager().registerEvent(Type.PLUGIN_ENABLE, new server(this), Priority.Low, this);
+        this.getServer().getPluginManager().registerEvents(serverListener, this);
     }
 }

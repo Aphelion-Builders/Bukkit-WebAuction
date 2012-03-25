@@ -1,34 +1,32 @@
 package me.minercraftguy.webauction;
 
+import com.alta189.sqlLibrary.MySQL.mysqlCore;
+import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.iCo6.iConomy;
+import com.nijikokun.WA.register.payment.Methods;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
+import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
-
-import com.alta189.sqlLibrary.MySQL.mysqlCore;
-import com.alta189.sqlLibrary.SQLite.sqlCore;
-import com.iConomy.*;
-import com.nijikokun.WA.register.payment.Methods;
 
 public class WebAuction extends JavaPlugin {
 
@@ -58,7 +56,7 @@ public class WebAuction extends JavaPlugin {
     public String dbDatabase = null;
     public Boolean getMessages = false;
     public static int signDelay = 0;
-    public Configuration config;
+    public YamlConfiguration config;
     public iConomy iConomy = null;
     public static int lastAuction = 0;
     public static int auctionCount = 0;
@@ -70,19 +68,24 @@ public class WebAuction extends JavaPlugin {
     }
 
     public void onEnable() {
-        this.log.info(this.logPrefix + "WebAuction is initializing");
+        WebAuction.log.log(Level.INFO, "{0} WebAuction is initializing", WebAuction.logPrefix);
         File f = new File("plugins/WebAuction");
         f.mkdir();
         info = this.getDescription();
         PluginManager pm = getServer().getPluginManager();
-        config = getConfiguration();
         dbHost = config.getString("dbHost", "localhost");
         dbUser = config.getString("dbUser", "root");
         dbPass = config.getString("dbPass", "pass123");
         dbDatabase = config.getString("dbDatabase", "minecraft");
         getMessages = config.getBoolean("reportSalesInGame", false);
         signDelay = config.getInt("signDelayMilli", 1000);
-        config.save();
+        try {
+            config.save(f);
+        } 
+        catch (IOException ex) 
+        {
+            Logger.getLogger(WebAuction.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         getCommand("wa").setExecutor(new WebAuctionCommands(this));
 
@@ -546,14 +549,14 @@ public class WebAuction extends JavaPlugin {
 //e.printStackTrace();
         }
         this.manageMySQL.close();
-        pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLUGIN_ENABLE, new server(this), Priority.Monitor, this);
-        pm.registerEvent(Event.Type.PLUGIN_DISABLE, new server(this), Priority.Monitor, this);
+        pm.registerEvent(Event.Result., playerListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.CUSTOM_EVENT, inventoryListener, EventPriority.NORMAL, this);
+        pm.registerEvent(Event.Type.PLUGIN_ENABLE, new server(this), EventPriority.MONITOR, this);
+        pm.registerEvent(Event.Type.PLUGIN_DISABLE, new server(this), EventPriority.MONITOR, this);
     }
 
     public void onDisable() {

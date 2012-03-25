@@ -5,38 +5,35 @@ import com.nijikokun.WA.register.Register;
 import com.nijikokun.WA.register.payment.Methods;
 
 // Bukkit Imports
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
 public class server implements Listener {
     private Register plugin;
-    private Methods Methods = null;
 
-    public server(Register register) {
-        this.plugin = register;
-        this.Methods = new Methods();
+    public server(Register plugin) {
+        this.plugin = plugin;
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPluginDisable(PluginDisableEvent event) {
         // Check to see if the plugin thats being disabled is the one we are using
-        if (this.Methods != null && this.Methods.hasMethod()) {
-            Boolean check = this.Methods.checkDisabled(event.getPlugin());
-
-            if(check) {
+        if (Methods.hasMethod()) {
+            if(Methods.checkDisabled(event.getPlugin())) {
                 Methods.reset();
                 System.out.println("[" + plugin.info.getName() + "] Payment method was disabled. No longer accepting payments.");
             }
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginEnable(PluginEnableEvent event) {
         // Check to see if we need a payment method
-        if (!this.Methods.hasMethod()) {
-            if(this.Methods.setMethod(plugin.getServer().getPluginManager())) {
-                if(this.Methods.hasMethod())
-                    System.out.println("[" + plugin.info.getName() + "] Payment method found (" + this.Methods.getMethod().getName() + " version: " + this.Methods.getMethod().getVersion() + ")");
-            }
+        if (!Methods.hasMethod() && Methods.setMethod(plugin.getServer().getPluginManager())) {
+            System.out.println("[" + plugin.info.getName() + "] Payment method found (" + Methods.getMethod().getName() + " version: " + Methods.getMethod().getVersion() + ")");
         }
     }
 }

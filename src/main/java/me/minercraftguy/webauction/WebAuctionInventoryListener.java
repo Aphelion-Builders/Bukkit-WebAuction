@@ -5,11 +5,12 @@ import java.sql.ResultSet;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.getspout.spoutapi.event.inventory.InventoryCloseEvent;
-import org.getspout.spoutapi.event.inventory.InventoryListener;
-import org.getspout.spoutapi.event.inventory.InventoryOpenEvent;
+import org.spout.api.event.Listener;
+import org.spout.api.event.inventory.PlayerInventoryCloseEvent;
+import org.spout.api.event.inventory.PlayerInventoryEvent;
+import org.spout.api.event.inventory.PlayerInventoryOpenEvent;
 
-public class WebAuctionInventoryListener extends InventoryListener {
+public class WebAuctionInventoryListener implements Listener {
 
     private final WebAuction plugin;
 
@@ -17,10 +18,10 @@ public class WebAuctionInventoryListener extends InventoryListener {
         this.plugin = plugin;
     }
 
-    public void onInventoryOpen(InventoryOpenEvent event) {
+    public void onInventoryOpen(PlayerInventoryOpenEvent event) {
     }
 
-    public void onInventoryClose(InventoryCloseEvent event) {
+    public void onInventoryClose(PlayerInventoryCloseEvent event) {
         plugin.manageMySQL.initialize();
         if (event.getPlayer() != null) {
 
@@ -50,16 +51,15 @@ public class WebAuctionInventoryListener extends InventoryListener {
                                 currentQuantity += quantityInt;
                                 String queryUpdate = "UPDATE WA_Items SET quantity='" + currentQuantity + "' WHERE name='" + itemName + "' AND player='" + playerName + "' AND damage='" + itemDamage + "';";
                                 //event.getPlayer().sendMessage(queryUpdate);
-                                this.plugin.manageMySQL.updateQuery(queryUpdate);
+                                WebAuction.manageMySQL.updateQuery(queryUpdate);
                             } else {
                                 String queryInsert = "INSERT INTO WA_Items (name, damage, player, quantity) VALUES ('" + itemName + "', '" + itemDamage + "', '" + playerName + "', '" + quantityInt + "');";
                                 //event.getPlayer().sendMessage(queryInsert);
-                                this.plugin.manageMySQL.insertQuery(queryInsert);
+                                WebAuction.manageMySQL.insertQuery(queryInsert);
                             }
                         }
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
-                        e.printStackTrace();
                     }
                 }
                 inv.clear();
